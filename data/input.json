@@ -1,0 +1,32 @@
+[
+  {
+    "request_id": "tx-123",
+    "payload": {
+      "user": {
+        "name": "Alice",
+        "address": { "city": "New York", "zip": "10001" },
+        "status": "ACTIVE"
+      }
+    }
+  },
+  {
+    "request_id": "tx-124",
+    "payload": {
+      "user": {
+        "name": "Bob",
+        "address": { "city": "London", "zip": "20002" },
+        "status": "BLOCKED"
+      }
+    }
+  },
+  {
+    "request_id": "tx-125",
+    "payload": {
+      "user": {
+        "name": "Charlie",
+        "address": { "city": "Paris", "zip": "30003" },
+        "status": "ACTIVE"
+      }
+    }
+  }
+]

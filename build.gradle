@@ -19,7 +19,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.24.2'
 }
 
-// 1. Фикс кодировки
+// 1. Фикс кодировки для Windows
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -37,15 +37,12 @@ jacoco {
     toolVersion = "0.8.8"
 }
 
-// Проверка покрытия (исключаем Main)
+// Проверка покрытия (исключаем Main и model)
 jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = 'CLASS'
-            excludes = [
-                'com.jsonflattener.Main',
-                'com.jsonflattener.model.*'
-            ]
+            excludes = ['com.jsonflattener.Main', 'com.jsonflattener.model.*']
             limit {
                 minimum = 0.75
             }
@@ -61,24 +58,19 @@ jacocoTestReport {
     }
 }
 
-// --- CHECKSTYLE (НАДЕЖНЫЙ МЕТОД ДЛЯ CI/CD) ---
+// --- CHECKSTYLE (АВТОНОМНЫЙ РЕЖИМ) ---
 
 checkstyle {
-    // Используем свежую версию, совместимую с Java 11
-    toolVersion = '10.12.0'
-    ignoreFailures = false // Пусть падает, если есть ошибки стиля
-    
-    // Указываем путь к файлу, который мы создадим сами
+    // Версия 8.45.1 самая стабильная и не требует сложных конфигов
+    toolVersion = '8.45.1'
+    ignoreFailures = false
     configFile = file("${buildDir}/checkstyle.xml")
 }
 
-// Задача для генерации конфига перед проверкой
+// Задача создает конфиг БЕЗ ссылок на интернет (DTD), чтобы не падало на GitHub
 task writeCheckstyleConfig {
     doLast {
         def configContent = """<?xml version="1.0"?>
-<!DOCTYPE module PUBLIC
-        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
-        "https://checkstyle.org/dtds/configuration_1_3.dtd">
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
     <module name="TreeWalker">
@@ -91,16 +83,15 @@ task writeCheckstyleConfig {
         def file = file("${buildDir}/checkstyle.xml")
         file.parentFile.mkdirs()
         file.write(configContent, "UTF-8")
-        println "Checkstyle config created at: " + file.absolutePath
+        println "Checkstyle config generated at: " + file.absolutePath
     }
 }
 
-// Привязываем генерацию к задачам проверки
 checkstyleMain.dependsOn writeCheckstyleConfig
 checkstyleTest.dependsOn writeCheckstyleConfig
 
-// Отключаем Checkstyle локально на Windows, чтобы не было проблем с OneDrive
-// Но включаем на CI (GitHub)
+// Локально на Windows отключаем, чтобы не ругался на OneDrive
+// На GitHub Actions (CI=true) включаем
 if (System.getenv('CI') != 'true') {
     tasks.withType(Checkstyle) {
         enabled = false

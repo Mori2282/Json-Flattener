@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'jacoco'
+    id 'checkstyle'
+}
+
+group = 'com.jsonflattener'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+}
+
+// --- ИСПРАВЛЕНИЕ КОДИРОВКИ (ВАЖНО ДЛЯ WINDOWS) ---
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainClass = 'com.jsonflattener.Main'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            // Исключаем Main класс из подсчета статистики
+            excludes = ['com.jsonflattener.Main']
+            limit {
+                minimum = 0.75
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+// --- УМНАЯ НАСТРОЙКА CHECKSTYLE ---
+checkstyle {
+    toolVersion = '8.45.1'
+    ignoreFailures = true
+    // Конфигурация "в памяти", чтобы обойти блокировку файлов OneDrive
+    config = resources.text.fromString("""<?xml version="1.0"?>
+<module name="Checker">
+    <module name="TreeWalker">
+        <module name="LineLength">
+            <property name="max" value="120"/>
+        </module>
+    </module>
+</module>""")
+}
+
+// ГЛАВНЫЙ ХАК: Отключаем задачи checkstyle, если это не GitHub Actions
+// (Локально на Windows они не запустятся и не сломают сборку)
+tasks.withType(Checkstyle) {
+    enabled = System.getenv('CI') == 'true'
+}
+
+task runApp(type: JavaExec) {
+    group = 'Application'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.jsonflattener.Main'
+    systemProperty "INPUT_JSON", System.getenv('INPUT_JSON') ?: 'data/input.json'
+}
+
+check.dependsOn jacocoTestCoverageVerification

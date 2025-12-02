@@ -59,10 +59,10 @@ jacocoTestReport {
 
 // --- CHECKSTYLE (КЛАССИЧЕСКИЙ РЕЖИМ) ---
 checkstyle {
-    // Используем стабильную версию
-    toolVersion = '10.12.0'
+    // Версия 8.45.1 работает надежнее всего при проблемах с конфигами
+    toolVersion = '8.45.1'
+    
     // Сборка НЕ упадет, если Checkstyle найдет ошибки (чтобы мы увидели тесты)
-    // Если хотите строгую проверку, поставьте false
     ignoreFailures = true 
     // Путь к нашему файлу
     configFile = file("${rootDir}/config/checkstyle.xml")

@@ -71,11 +71,11 @@ git clone https://github.com/Mori2282/Json-Flattener.git
 :: 2. Перейдите в директорию проекта
 cd Json-Flattener
 
-:: 3. Создайте файл конфигурации (обязательно!)
-echo search.key=payload.user.address.city > app.properties
-echo filter.key=payload.user.status >> app.properties
-echo filter.value=ACTIVE >> app.properties
-
+:: 3. Создайте файл конфигурации (обязательно вставьте строки ниже notepad!)
+notepad app.properties
+search.key=payload.user.address.city
+filter.key=payload.user.status
+filter.value=ACTIVE
 :: 4. Соберите проект
 gradlew.bat build
 

@@ -71,17 +71,22 @@ git clone https://github.com/Mori2282/Json-Flattener.git
 :: 2. Перейдите в директорию проекта
 cd Json-Flattener
 
-:: 3. Соберите проект
+:: 3. Создайте файл конфигурации (обязательно!)
+echo search.key=payload.user.address.city > app.properties
+echo filter.key=payload.user.status >> app.properties
+echo filter.value=ACTIVE >> app.properties
+
+:: 4. Соберите проект
 gradlew.bat build
 
-:: 4. Подготовьте входные данные
+:: 5. Подготовьте входные данные
 copy data\input.json data\my-data.json
 
-:: 5. Запустите приложение
+:: 6. Запустите приложение
 set INPUT_JSON=data\my-data.json
 gradlew.bat runApp
 
-:: 6. Запустите тесты
+:: 7. Запустите тесты
 gradlew.bat test
 ```
 
@@ -94,17 +99,22 @@ git clone https://github.com/Mori2282/Json-Flattener.git
 # 2. Перейдите в директорию проекта
 cd Json-Flattener
 
-# 3. Соберите проект
+# 3. Создайте файл конфигурации (обязательно!)
+echo "search.key=payload.user.address.city" > app.properties
+echo "filter.key=payload.user.status" >> app.properties
+echo "filter.value=ACTIVE" >> app.properties
+
+# 4. Соберите проект
 ./gradlew build
 
-# 4. Подготовьте входные данные
+# 5. Подготовьте входные данные
 cp data/input.json data/my-data.json
 
-# 5. Запустите приложение
+# 6. Запустите приложение
 export INPUT_JSON=data/my-data.json
 ./gradlew runApp
 
-# 6. Запустите тесты
+# 7. Запустите тесты
 ./gradlew test
 ```
 
